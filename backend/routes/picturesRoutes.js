@@ -19,6 +19,7 @@ router.get("/:id", PictureController.getPictureById);
 router.delete("/:id", verifyToken, PictureController.removePictureById)
 //router.patch('/:id', verifyToken, imageUpload.array('images', PictureController.updatePicture))
 router.patch('/:id', verifyToken, PictureController.updatePicture);
+router.patch('/favorites/:id', verifyToken, PictureController.favorites)
 
 
 module.exports = router;

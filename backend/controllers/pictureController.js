@@ -217,7 +217,53 @@ module.exports = class PictureController {
 
   }
 
+static async favorites(req, res){
 
+  const id = req.params.id
+
+  //check if pictures exists
+  const picture = await Picture.findOne({_id : id})
+
+  if(!picture){
+    res.status(404).json({ message: 'Imagem não encontrada!!'})
+    return
+  }
+
+    //check if logged in user registered the picture
+
+    const token = getToken(req)
+    const user = await getUserByToken(token)
+
+    if(picture.user._id.equals(user._id)){
+      res.status(422).json({ message: "voce nao pode favoritar sua mesma mensagem" });
+      return;
+    }
+
+    if(picture.favorites){
+      if(picture.favorites._id.equals(user._id)){
+        res.status(422).json({
+          message: 'Esta imagem ja é sua favorita'
+        })
+        return
+      }
+    }
+
+    // add user with pictures
+
+    picture.favorites = {
+      _id: user._id,
+      name: user.name,
+      image: user.image
+    }
+
+    await Picture.findByIdAndUpdate(id, picture)
+      
+      res.status(200).json({
+        message: `A imagem foi adicionada aos favoritos`
+      })
+
+
+}
 
 
 };
